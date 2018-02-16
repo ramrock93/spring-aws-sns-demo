@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.*;
 
 /**
  * Created by Ramin Esfandiari (Inmeta Consulting AS) on 16.02.2018.
+ *
+ * Test
  */
 @RestController
 @Slf4j
