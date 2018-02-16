@@ -29,39 +29,15 @@ public class SNSConfiguration {
     private String secretKey;
     @Value("${aws.sns.region}")
     private String region;
-    @Value("${aws.sns.topicArn}")
-    private String topicArn;
-    @Value("${aws.sns.topicName}")
-    private String topicName;
 
     @Bean
     public AmazonSNS ssnClient() {
         // Create Amazon SNS Client
         AWSCredentials awsCredentials = new BasicAWSCredentials(accessKey, secretKey);
-        AmazonSNS snsClient = AmazonSNSClientBuilder.standard()
+
+        return AmazonSNSClientBuilder.standard()
                 .withCredentials(new AWSStaticCredentialsProvider(awsCredentials))
                 .withRegion(region)
                 .build();
-
-        // OPTIONAL: Check the topic already created or not
-        ListTopicsResult listTopicsResult = snsClient.listTopics();
-        List<Topic> topics = listTopicsResult.getTopics();
-
-        Optional<Topic> result = topics.stream()
-                .filter(t -> topicArn.equalsIgnoreCase(t.getTopicArn())).findAny();
-
-        // Create a new topic if it doesn't exist
-        if (!result.isPresent()) {
-            createSNSTopic(snsClient);
-        }
-        return snsClient;
-    }
-
-    private CreateTopicResult createSNSTopic(AmazonSNS snsClient) {
-        CreateTopicRequest createTopic = new CreateTopicRequest(topicName);
-        CreateTopicResult result = snsClient.createTopic(createTopic);
-        log.info("---> Created topic request: ",
-                snsClient.getCachedResponseMetadata(createTopic));
-        return result;
     }
 }
